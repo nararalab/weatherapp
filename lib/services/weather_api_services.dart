@@ -54,14 +54,12 @@ class WeatherApiServices {
     try {
       final http.Response response = await http.get(uri);
 
-      if (response.statusCode != 299) {
+      if (response.statusCode != 200) {
         throw Exception(httpErrorHandler(response));
       }
 
       final weatherJson = json.decode(response.body);
       final Weather weather = Weather.fromJson(weatherJson);
-
-      print(weather);
 
       return weather;
     } catch (e) {
