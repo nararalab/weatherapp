@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weatherapp/repositories/weather_repository.dart';
+import 'package:http/http.dart' as http;
+import 'package:weatherapp/services/weather_api_services.dart';
 
 import 'pages/home_page.dart';
+import 'providers/weather_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +16,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '날씨앱',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        Provider<WeatherRepository>(create: (context) {
+          final WeatherApiServices weatherApiServices =
+              WeatherApiServices(httpClient: http.Client());
+          return WeatherRepository(weatherApiServices: weatherApiServices);
+        }),
+        ChangeNotifierProvider<WeatherProvider>(
+          create: (context) => WeatherProvider(
+            weatherRepository: context.read<WeatherRepository>(),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: '날씨앱',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
       ),
-      home: const HomePage(),
     );
   }
 }
