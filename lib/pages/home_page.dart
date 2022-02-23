@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:weatherapp/providers/weather_provider.dart';
-import 'package:weatherapp/repositories/weather_repository.dart';
-import 'package:weatherapp/services/weather_api_services.dart';
 
 import 'search_page.dart';
 
@@ -16,6 +13,35 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? _city;
+  late final WeatherProvider _weatherProv;
+
+  @override
+  void initState() {
+    super.initState();
+    _weatherProv = context.read<WeatherProvider>();
+    _weatherProv.addListener(_registerListener);
+  }
+
+  @override
+  void dispose() {
+    _weatherProv.removeListener(_registerListener);
+    super.dispose();
+  }
+
+  void _registerListener() {
+    final WeatherState ws = context.read<WeatherProvider>().state;
+
+    if (ws.status == WeatherStatus.error) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(ws.error.errMsg),
+          );
+        },
+      );
+    }
+  }
 
   // 정상동작 확인을 위한 테스트 코드
   // @override
@@ -58,8 +84,42 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: const Center(
-        child: Text('홈'),
+      body: _showWeather(),
+    );
+  }
+
+  Widget _showWeather() {
+    final weatherState = context.watch<WeatherProvider>().state;
+
+    if (weatherState.status == WeatherStatus.initial) {
+      return const Center(
+        child: Text(
+          '도시를 선택하세요',
+          style: TextStyle(fontSize: 20.0),
+        ),
+      );
+    }
+
+    if (weatherState.status == WeatherStatus.loading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (weatherState.status == WeatherStatus.error &&
+        weatherState.weather.title == '') {
+      return const Center(
+        child: Text(
+          '도시를 선택하세요',
+          style: TextStyle(fontSize: 20.0),
+        ),
+      );
+    }
+
+    return Center(
+      child: Text(
+        weatherState.weather.title,
+        style: const TextStyle(fontSize: 18.0),
       ),
     );
   }

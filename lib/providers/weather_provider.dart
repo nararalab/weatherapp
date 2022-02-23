@@ -72,9 +72,9 @@ class WeatherProvider with ChangeNotifier {
         status: WeatherStatus.error,
         error: e,
       );
-      print('_state: $_state');
-      notifyListeners();
 
+      print('_state: $_state');
+      _state = WeatherState.initial();
       notifyListeners();
     }
   }
