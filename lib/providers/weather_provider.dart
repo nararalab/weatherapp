@@ -74,7 +74,6 @@ class WeatherProvider with ChangeNotifier {
       );
 
       print('_state: $_state');
-      _state = WeatherState.initial();
       notifyListeners();
     }
   }
