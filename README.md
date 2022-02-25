@@ -203,4 +203,8 @@ flutter create weatherapp
 flutter pub add equatable
 flutter pub add provider
 flutter pub add http
+
+
+flutter pub add state_notifier
+flutter pub add flutter_state_notifier
 ```

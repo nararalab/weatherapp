@@ -13,10 +13,10 @@ class WeatherRepository {
   Future<Weather> fetchWeather(String city) async {
     try {
       final int woeid = await weatherApiServices.getWoeid(city);
-      print('woeid: $woeid');
+      print('[디버깅] woeid: $woeid');
 
       final Weather weather = await weatherApiServices.getWeather(woeid);
-      print('weather: $weather');
+      print('[디버깅] weather: $weather');
 
       return weather;
     } on WeatherException catch (e) {

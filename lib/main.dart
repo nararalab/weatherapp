@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:weatherapp/providers/temp_settings_provider.dart';
 import 'package:weatherapp/repositories/weather_repository.dart';
@@ -25,27 +26,20 @@ class MyApp extends StatelessWidget {
               WeatherApiServices(httpClient: http.Client());
           return WeatherRepository(weatherApiServices: weatherApiServices);
         }),
-        ChangeNotifierProvider<WeatherProvider>(
-          create: (context) => WeatherProvider(
-            weatherRepository: context.read<WeatherRepository>(),
-          ),
+        StateNotifierProvider<WeatherProvider, WeatherState>(
+          create: (context) => WeatherProvider(),
         ),
-        ChangeNotifierProvider<TempSettingsProvider>(
+        StateNotifierProvider<TempSettingsProvider, TempSettingsState>(
           create: (context) => TempSettingsProvider(),
         ),
-        ProxyProvider<WeatherProvider, ThemeProvider>(
-          update: (
-            BuildContext context,
-            WeatherProvider weatherProvider,
-            ThemeProvider? _,
-          ) =>
-              ThemeProvider(weatherProvider: weatherProvider),
+        StateNotifierProvider<ThemeProvider, ThemeState>(
+          create: (context) => ThemeProvider(),
         ),
       ],
       builder: (context, _) => MaterialApp(
         title: '날씨앱',
         debugShowCheckedModeBanner: false,
-        theme: context.watch<ThemeProvider>().state.appTheme == AppTheme.light
+        theme: context.watch<ThemeState>().appTheme == AppTheme.light
             ? ThemeData.light()
             : ThemeData.dark(),
         home: const HomePage(),

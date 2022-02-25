@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:state_notifier/state_notifier.dart';
 
 import 'package:weatherapp/repositories/weather_repository.dart';
 
@@ -46,35 +46,29 @@ class WeatherState extends Equatable {
   }
 }
 
-class WeatherProvider with ChangeNotifier {
+class WeatherProvider extends StateNotifier<WeatherState> with LocatorMixin {
   WeatherState _state = WeatherState.initial();
+  WeatherProvider() : super(WeatherState.initial());
+  @override
   WeatherState get state => _state;
-
-  final WeatherRepository weatherRepository;
-  WeatherProvider({
-    required this.weatherRepository,
-  });
 
   Future<void> fetchWeather(String city) async {
     _state = _state.copyWith(status: WeatherStatus.loading);
-    notifyListeners();
 
     try {
-      final Weather weather = await weatherRepository.fetchWeather(city);
-      _state = _state.copyWith(
+      final Weather weather =
+          await read<WeatherRepository>().fetchWeather(city);
+      state = _state.copyWith(
         status: WeatherStatus.loaded,
         weather: weather,
       );
-      print('_state: $_state');
-      notifyListeners();
+      print('[디버깅] state: $state');
     } on CustomError catch (e) {
-      _state = _state.copyWith(
+      state = state.copyWith(
         status: WeatherStatus.error,
         error: e,
       );
-
-      print('_state: $_state');
-      notifyListeners();
+      print('[디버깅] state: $state');
     }
   }
 }

@@ -6,6 +6,6 @@ String httpErrorHandler(http.Response response) {
 
   final String errorMessage = '에러남\n상태코드: $statusCode\n상태메시지:$reasonPhrase';
 
-  print(errorMessage);
+  print("[디버깅]" + errorMessage);
   return errorMessage;
 }

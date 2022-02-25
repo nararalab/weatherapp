@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:state_notifier/state_notifier.dart';
 
 import 'package:weatherapp/providers/weather_provider.dart';
 
@@ -35,17 +35,19 @@ class ThemeState extends Equatable {
   List<Object> get props => [appTheme];
 }
 
-class ThemeProvider {
-  final WeatherProvider weatherProvider;
-  ThemeProvider({
-    required this.weatherProvider,
-  });
+class ThemeProvider extends StateNotifier<ThemeState> with LocatorMixin {
+  ThemeProvider() : super(ThemeState.initial());
 
-  ThemeState get state {
-    if (weatherProvider.state.weather.theTemp > dataWarmOrNot) {
-      return ThemeState();
+  @override
+  void update(Locator watch) {
+    final wp = watch<WeatherState>().weather;
+
+    if (wp.theTemp > dataWarmOrNot) {
+      state = state.copyWith(appTheme: AppTheme.light);
     } else {
-      return ThemeState(appTheme: AppTheme.dark);
+      state = state.copyWith(appTheme: AppTheme.dark);
     }
+
+    super.update(watch);
   }
 }
