@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weatherapp/providers/temp_settings_provider.dart';
 import 'package:weatherapp/repositories/weather_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:weatherapp/services/weather_api_services.dart';
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
           create: (context) => WeatherProvider(
             weatherRepository: context.read<WeatherRepository>(),
           ),
+        ),
+        ChangeNotifierProvider<TempSettingsProvider>(
+          create: (context) => TempSettingsProvider(),
         ),
       ],
       child: MaterialApp(

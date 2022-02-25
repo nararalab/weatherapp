@@ -10,7 +10,7 @@ class Weather extends Equatable {
   final String title;
   final int woeid;
   final DateTime lastUpdated;
-  Weather({
+  const Weather({
     required this.weatherStatename,
     required this.weatherStateAbbr,
     required this.created,

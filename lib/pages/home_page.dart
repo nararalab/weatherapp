@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weatherapp/constants/constants.dart';
+import 'package:weatherapp/providers/temp_settings_provider.dart';
 import 'package:weatherapp/providers/weather_provider.dart';
 import 'package:weatherapp/wedgets/error_dialog.dart';
 
 import 'search_page.dart';
+import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -75,6 +77,17 @@ class _HomePageState extends State<HomePage> {
                 context.read<WeatherProvider>().fetchWeather(_city!);
               }
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return const SettingsPage();
+                }),
+              );
+            },
           )
         ],
       ),
@@ -83,6 +96,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   String showTemprature(double temperature) {
+    final tempUnit = context.watch<TempSettingsProvider>().state.tempUnit;
+    if (tempUnit == TempUnit.fahrenheit) {
+      return ((temperature * 9 / 5) + 32).toStringAsFixed(2) + '℉';
+    }
     return temperature.toStringAsFixed(2) + '℃';
   }
 
