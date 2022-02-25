@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:weatherapp/services/weather_api_services.dart';
 
 import 'pages/home_page.dart';
+import 'providers/theme_provider.dart';
 import 'providers/weather_provider.dart';
 
 void main() {
@@ -32,13 +33,22 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<TempSettingsProvider>(
           create: (context) => TempSettingsProvider(),
         ),
+        ChangeNotifierProxyProvider<WeatherProvider, ThemeProvider>(
+          create: (context) => ThemeProvider(),
+          update: (
+            BuildContext context,
+            WeatherProvider weatherProvider,
+            ThemeProvider? themeProvider,
+          ) =>
+              themeProvider!..update(weatherProvider),
+        ),
       ],
-      child: MaterialApp(
+      builder: (context, _) => MaterialApp(
         title: '날씨앱',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: context.watch<ThemeProvider>().state.appTheme == AppTheme.light
+            ? ThemeData.light()
+            : ThemeData.dark(),
         home: const HomePage(),
       ),
     );
