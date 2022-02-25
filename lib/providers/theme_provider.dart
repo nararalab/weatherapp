@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+
 import 'package:weatherapp/providers/weather_provider.dart';
 
 import '../constants/constants.dart';
@@ -34,15 +35,17 @@ class ThemeState extends Equatable {
   List<Object> get props => [appTheme];
 }
 
-class ThemeProvider with ChangeNotifier {
-  ThemeState _state = ThemeState.initial();
-  ThemeState get state => _state;
-  void update(WeatherProvider wp) {
-    if (wp.state.weather.theTemp > dataWarmOrNot) {
-      _state = _state.copyWith(appTheme: AppTheme.light);
+class ThemeProvider {
+  final WeatherProvider weatherProvider;
+  ThemeProvider({
+    required this.weatherProvider,
+  });
+
+  ThemeState get state {
+    if (weatherProvider.state.weather.theTemp > dataWarmOrNot) {
+      return ThemeState();
     } else {
-      _state = _state.copyWith(appTheme: AppTheme.dark);
+      return ThemeState(appTheme: AppTheme.dark);
     }
-    notifyListeners();
   }
 }
